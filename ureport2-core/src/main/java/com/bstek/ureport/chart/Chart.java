@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2017 Bstek
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
  * of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
@@ -58,7 +58,7 @@ public class Chart {
 			}
 		}
 		if(plugins!=null && plugins.size()>0) {
-			if(withoption){				
+			if(withoption){
 				sb.append(",");
 			}
 			withoption=true;
@@ -71,6 +71,9 @@ public class Chart {
 			}
 			sb.append("}");
 		}else {
+			if(withoption){
+				sb.append(",");
+			}
 			withoption=true;
 			sb.append("\"plugins\": {");
 			sb.append("\"datalabels\":{\"display\":false}");
@@ -89,22 +92,22 @@ public class Chart {
 			}
 			if(yaxes!=null){
 				if(xaxes!=null){
-					sb.append(",\"yAxes\":[");					
+					sb.append(",\"yAxes\":[");
 				}else{
-					sb.append("\"yAxes\":[");										
+					sb.append("\"yAxes\":[");
 				}
 				sb.append(yaxes.toJson());
 				sb.append("]");
 			}else{
 				if(hasYAxes(dataset)){
-					sb.append(",\"yAxes\":[{\"ticks\":{\"min\":0}}]");					
+					sb.append(",\"yAxes\":[{\"ticks\":{\"min\":0}}]");
 				}
 			}
 			sb.append("}");
 		}else{
 			if(withoption && hasYAxes(dataset)){
 				sb.append(",");
-				sb.append("\"scales\":{\"yAxes\":[]}");				
+				sb.append("\"scales\":{\"yAxes\":[]}");
 			}
 		}
 		sb.append("}");
@@ -129,7 +132,7 @@ public class Chart {
 		}
 		return false;
 	}
-	
+
 	public List<Option> getOptions() {
 		return options;
 	}
