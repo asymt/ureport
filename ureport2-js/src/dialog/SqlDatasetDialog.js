@@ -232,7 +232,8 @@ export default class SqlDatasetDialog{
                 });
                 this.codeMirror.setSize('660px','160px');
             }
-            this.codeMirror.setValue(this.data.sql);
+            if(this.data.sql)
+                this.codeMirror.setValue(this.data.sql);
         },500);
         const type=this.db.type;
         const parameters={type};
