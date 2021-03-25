@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2017 Bstek
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
  * of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
@@ -65,7 +65,7 @@ public class DesignerServletAction extends RenderPageServletAction {
 			invokeMethod(method, req, resp);
 		}else{
 			VelocityContext context = new VelocityContext();
-			context.put("contextPath", req.getContextPath());
+			context.put("contextPath", ReportUtils.getContextPath(req));
 			resp.setContentType("text/html");
 			resp.setCharacterEncoding("utf-8");
 			Template template=ve.getTemplate("ureport-html/designer.html","utf-8");
@@ -87,7 +87,7 @@ public class DesignerServletAction extends RenderPageServletAction {
 		List<ErrorInfo> infos=errorListener.getInfos();
 		writeObjectToJson(resp, infos);
 	}
-	
+
 	public void conditionScriptValidation(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String content=req.getParameter("content");
 		ANTLRInputStream antlrInputStream=new ANTLRInputStream(content);
@@ -101,8 +101,8 @@ public class DesignerServletAction extends RenderPageServletAction {
 		List<ErrorInfo> infos=errorListener.getInfos();
 		writeObjectToJson(resp, infos);
 	}
-	
-	
+
+
 	public void parseDatasetName(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String expr=req.getParameter("expr");
 		ANTLRInputStream antlrInputStream=new ANTLRInputStream(expr);
@@ -125,7 +125,7 @@ public class DesignerServletAction extends RenderPageServletAction {
 		IOUtils.closeQuietly(inputStream);
 		TempObjectCache.putObject(PREVIEW_KEY, reportDef);
 	}
-	
+
 	public void loadReport(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String file=req.getParameter("file");
 		if(file==null){
@@ -139,10 +139,10 @@ public class DesignerServletAction extends RenderPageServletAction {
 			writeObjectToJson(resp, new ReportDefinitionWrapper(reportDef));
 		}else{
 			ReportDefinition reportDef=reportRender.parseReport(file);
-			writeObjectToJson(resp, new ReportDefinitionWrapper(reportDef));			
+			writeObjectToJson(resp, new ReportDefinitionWrapper(reportDef));
 		}
 	}
-	
+
 	public void deleteReportFile(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String file=req.getParameter("file");
 		if(file==null){
@@ -160,8 +160,8 @@ public class DesignerServletAction extends RenderPageServletAction {
 		}
 		targetReportProvider.deleteReport(file);
 	}
-	
-	
+
+
 	public void saveReportFile(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String file=req.getParameter("file");
 		file=ReportUtils.decodeFileName(file);
@@ -184,19 +184,19 @@ public class DesignerServletAction extends RenderPageServletAction {
 		CacheUtils.cacheReportDefinition(file, reportDef);
 		IOUtils.closeQuietly(inputStream);
 	}
-	
+
 	public void loadReportProviders(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		writeObjectToJson(resp, reportProviders);
 	}
-	
+
 	public void setReportRender(ReportRender reportRender) {
 		this.reportRender = reportRender;
 	}
-	
+
 	public void setReportParser(ReportParser reportParser) {
 		this.reportParser = reportParser;
 	}
-	
+
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext)throws BeansException {
 		super.setApplicationContext(applicationContext);

@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2017 Bstek
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
  * of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
@@ -28,6 +28,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.bstek.ureport.console.designer.ReportUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -78,7 +79,7 @@ public class HtmlPreviewServletAction extends RenderPageServletAction {
 				htmlReport=loadReport(req);
 			}catch(Exception ex){
 				if(!(ex instanceof ReportDesignException)){
-					ex.printStackTrace();					
+					ex.printStackTrace();
 				}
 				errorMsg=buildExceptionMessage(ex);
 			}
@@ -95,22 +96,22 @@ public class HtmlPreviewServletAction extends RenderPageServletAction {
 				if(formData!=null){
 					context.put("searchFormJs", formData.getJs());
 					if(formData.getFormPosition().equals(FormPosition.up)){
-						context.put("upSearchFormHtml", formData.getHtml());						
-						context.put("downSearchFormHtml", "");						
+						context.put("upSearchFormHtml", formData.getHtml());
+						context.put("downSearchFormHtml", "");
 					}else{
-						context.put("downSearchFormHtml", formData.getHtml());						
-						context.put("upSearchFormHtml", "");						
+						context.put("downSearchFormHtml", formData.getHtml());
+						context.put("upSearchFormHtml", "");
 					}
 				}else{
 					context.put("searchFormJs", "");
 					context.put("downSearchFormHtml", "");
-					context.put("upSearchFormHtml", "");	
+					context.put("upSearchFormHtml", "");
 				}
 				context.put("content", htmlReport.getContent());
 				context.put("style", htmlReport.getStyle());
-				context.put("reportAlign", htmlReport.getReportAlign());				
-				context.put("totalPage", htmlReport.getTotalPage()); 
-				context.put("totalPageWithCol", htmlReport.getTotalPageWithCol()); 
+				context.put("reportAlign", htmlReport.getReportAlign());
+				context.put("totalPage", htmlReport.getTotalPage());
+				context.put("totalPageWithCol", htmlReport.getTotalPageWithCol());
 				context.put("pageIndex", htmlReport.getPageIndex());
 				context.put("chartDatas", convertJson(htmlReport.getChartDatas()));
 				context.put("error", false);
@@ -133,7 +134,7 @@ public class HtmlPreviewServletAction extends RenderPageServletAction {
 							String[] infos=toolsInfo.split(",");
 							for(String name:infos){
 								tools.doInit(name);
-							}						
+							}
 						}
 						context.put("_t", toolsInfo);
 						context.put("hasTools", true);
@@ -143,7 +144,7 @@ public class HtmlPreviewServletAction extends RenderPageServletAction {
 				}
 				context.put("tools", tools);
 			}
-			context.put("contextPath", req.getContextPath());
+			context.put("contextPath", ReportUtils.getContextPath(req));
 			resp.setContentType("text/html");
 			resp.setCharacterEncoding("utf-8");
 			Template template=ve.getTemplate("ureport-html/html-preview.html","utf-8");
@@ -152,7 +153,7 @@ public class HtmlPreviewServletAction extends RenderPageServletAction {
 			writer.close();
 		}
 	}
-	
+
 	private String buildTitle(HttpServletRequest req){
 		String title=req.getParameter("_title");
 		if(StringUtils.isBlank(title)){
@@ -170,7 +171,7 @@ public class HtmlPreviewServletAction extends RenderPageServletAction {
 		}
 		return title+"-ureport";
 	}
-	
+
 	private String convertJson(Collection<ChartData> data){
 		if(data==null || data.size()==0){
 			return "";
@@ -183,7 +184,7 @@ public class HtmlPreviewServletAction extends RenderPageServletAction {
 			throw new ReportComputeException(e);
 		}
 	}
-	
+
 	public void loadData(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		HtmlReport htmlReport=loadReport(req);
 		writeObjectToJson(resp, htmlReport);
@@ -205,10 +206,10 @@ public class HtmlPreviewServletAction extends RenderPageServletAction {
 		}else{
 			reportDefinition=reportRender.getReportDefinition(file);
 		}
-		Report report=reportBuilder.buildReport(reportDefinition, parameters);	
+		Report report=reportBuilder.buildReport(reportDefinition, parameters);
 		Map<String, ChartData> chartMap=report.getContext().getChartDataMap();
 		if(chartMap.size()>0){
-			CacheUtils.storeChartDataMap(chartMap);				
+			CacheUtils.storeChartDataMap(chartMap);
 		}
 		FullPageData pageData=PageBuilder.buildFullPageData(report);
 		StringBuilder sb=new StringBuilder();
@@ -219,10 +220,10 @@ public class HtmlPreviewServletAction extends RenderPageServletAction {
 				List<Page> columnPages=list.get(i);
 				if(i==0){
 					String html=htmlProducer.produce(context,columnPages,pageData.getColumnMargin(),false);
-					sb.append(html);											
+					sb.append(html);
 				}else{
 					String html=htmlProducer.produce(context,columnPages,pageData.getColumnMargin(),false);
-					sb.append(html);											
+					sb.append(html);
 				}
 			}
 		}else{
@@ -242,7 +243,7 @@ public class HtmlPreviewServletAction extends RenderPageServletAction {
 		map.put("html", sb.toString());
 		writeObjectToJson(resp, map);
 	}
-	
+
 	public void loadPagePaper(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String file=req.getParameter("_u");
 		file=decode(file);
@@ -251,7 +252,7 @@ public class HtmlPreviewServletAction extends RenderPageServletAction {
 		}
 		ReportDefinition report=null;
 		if(file.equals(PREVIEW_KEY)){
-			report=(ReportDefinition)TempObjectCache.getObject(PREVIEW_KEY);	
+			report=(ReportDefinition)TempObjectCache.getObject(PREVIEW_KEY);
 			if(report==null){
 				throw new ReportDesignException("Report data has expired.");
 			}
@@ -261,7 +262,7 @@ public class HtmlPreviewServletAction extends RenderPageServletAction {
 		Paper paper=report.getPaper();
 		writeObjectToJson(resp, paper);
 	}
-	
+
 	private HtmlReport loadReport(HttpServletRequest req) {
 		Map<String, Object> parameters = buildParameters(req);
 		HtmlReport htmlReport=null;
@@ -279,7 +280,7 @@ public class HtmlPreviewServletAction extends RenderPageServletAction {
 			Report report=reportBuilder.buildReport(reportDefinition, parameters);
 			Map<String, ChartData> chartMap=report.getContext().getChartDataMap();
 			if(chartMap.size()>0){
-				CacheUtils.storeChartDataMap(chartMap);				
+				CacheUtils.storeChartDataMap(chartMap);
 			}
 			htmlReport=new HtmlReport();
 			String html=null;
@@ -290,19 +291,19 @@ public class HtmlPreviewServletAction extends RenderPageServletAction {
 				List<Page> pages=pageData.getPages();
 				if(pages.size()==1){
 					Page page=pages.get(0);
-					html=htmlProducer.produce(context,page,false);					
+					html=htmlProducer.produce(context,page,false);
 				}else{
-					html=htmlProducer.produce(context,pages,pageData.getColumnMargin(),false);					
+					html=htmlProducer.produce(context,pages,pageData.getColumnMargin(),false);
 				}
 				htmlReport.setTotalPage(pageData.getTotalPages());
 				htmlReport.setPageIndex(index);
 			}else{
-				html=htmlProducer.produce(report);				
+				html=htmlProducer.produce(report);
 			}
 			if(report.getPaper().isColumnEnabled()){
-				htmlReport.setColumn(report.getPaper().getColumnCount());				
+				htmlReport.setColumn(report.getPaper().getColumnCount());
 			}
-			htmlReport.setChartDatas(report.getContext().getChartDataMap().values());			
+			htmlReport.setChartDatas(report.getContext().getChartDataMap().values());
 			htmlReport.setContent(html);
 			htmlReport.setTotalPage(report.getPages().size());
 			htmlReport.setStyle(reportDefinition.getStyle());
@@ -312,15 +313,15 @@ public class HtmlPreviewServletAction extends RenderPageServletAction {
 		}else{
 			if(StringUtils.isNotBlank(pageIndex) && !pageIndex.equals("0")){
 				int index=Integer.valueOf(pageIndex);
-				htmlReport=exportManager.exportHtml(file,req.getContextPath(),parameters,index);								
+				htmlReport=exportManager.exportHtml(file,ReportUtils.getContextPath(req),parameters,index);
 			}else{
-				htmlReport=exportManager.exportHtml(file,req.getContextPath(),parameters);				
+				htmlReport=exportManager.exportHtml(file,ReportUtils.getContextPath(req),parameters);
 			}
 		}
 		return htmlReport;
 	}
-	
-	
+
+
 	private String buildCustomParameters(HttpServletRequest req){
 		StringBuilder sb=new StringBuilder();
 		Enumeration<?> enumeration=req.getParameterNames();
@@ -343,7 +344,7 @@ public class HtmlPreviewServletAction extends RenderPageServletAction {
 		}
 		return sb.toString();
 	}
-	
+
 	private String buildExceptionMessage(Throwable throwable){
 		Throwable root=buildRootException(throwable);
 		StringWriter sw=new StringWriter();
@@ -354,11 +355,11 @@ public class HtmlPreviewServletAction extends RenderPageServletAction {
 		pw.close();
 		return trace;
 	}
-	
+
 	public void setExportManager(ExportManager exportManager) {
 		this.exportManager = exportManager;
 	}
-	
+
 	public void setReportBuilder(ReportBuilder reportBuilder) {
 		this.reportBuilder = reportBuilder;
 	}

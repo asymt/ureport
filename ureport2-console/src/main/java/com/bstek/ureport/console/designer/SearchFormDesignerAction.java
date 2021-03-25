@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2017 Bstek
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
  * of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
@@ -36,7 +36,7 @@ public class SearchFormDesignerAction extends RenderPageServletAction {
 	@Override
 	public void execute(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		VelocityContext context = new VelocityContext();
-		context.put("contextPath", req.getContextPath());
+		context.put("contextPath", ReportUtils.getContextPath(req));
 		resp.setContentType("text/html");
 		resp.setCharacterEncoding("utf-8");
 		Template template=ve.getTemplate("ureport-html/searchform.html","utf-8");
