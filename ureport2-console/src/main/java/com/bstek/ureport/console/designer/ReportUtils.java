@@ -43,7 +43,7 @@ public class ReportUtils {
 
 	public static String getContextPath(HttpServletRequest request){
 		String requestURI=request.getRequestURI();
-		String clientRequestURI=request.getHeader("client_request_uri");
+		String clientRequestURI=request.getHeader("client-request-uri");
 		if(StringUtils.isBlank(clientRequestURI)||requestURI.equals(clientRequestURI)){
 			return request.getContextPath();
 		}
