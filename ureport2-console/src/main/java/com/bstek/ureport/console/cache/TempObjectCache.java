@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2017 Bstek
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
  * of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
@@ -38,11 +38,11 @@ public class TempObjectCache{
 	public static void putObject(String key,Object obj){
 		tempObjectCache.store(key, obj);
 	}
-	
+
 	public static void removeObject(String key){
 		tempObjectCache.remove(key);
 	}
-	
+
 	public void remove(String key){
 		HttpServletRequest req=RequestHolder.getRequest();
 		if(req==null){
@@ -53,7 +53,7 @@ public class TempObjectCache{
 			mapObject.remove(key);
 		}
 	}
-	
+
 	public Object get(String key) {
 		HttpServletRequest req=RequestHolder.getRequest();
 		if(req==null){
@@ -83,13 +83,13 @@ public class TempObjectCache{
 		for(String key:expiredList){
 			sessionMap.remove(key);
 		}
-		String sessionId=req.getSession().getId();
-		ObjectMap obj=sessionMap.get(sessionId);
+		String previewId=req.getParameter("previewId");
+		ObjectMap obj=sessionMap.get(previewId);
 		if(obj!=null){
 			return obj;
 		}else{
 			ObjectMap mapObject=new ObjectMap();
-			sessionMap.put(sessionId, mapObject);
+			sessionMap.put(previewId, mapObject);
 			return mapObject;
 		}
 	}

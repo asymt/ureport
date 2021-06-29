@@ -754,4 +754,8 @@ export function buildPageSizeList(){
     }
 }
 
+export function strRandom(){
+    return Math.random().toString().substr(2)+new Date().getTime();
+}
+
 export const undoManager=new UndoManager();

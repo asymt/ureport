@@ -2,7 +2,7 @@
  * Created by Jacky.Gao on 2017-01-25.
  */
 import Tool from './Tool.js';
-import {tableToXml} from '../Utils.js';
+import {tableToXml,strRandom} from '../Utils.js';
 import {alert} from '../MsgBox.js';
 
 export default class PreviewTool extends Tool{
@@ -38,14 +38,20 @@ export default class PreviewTool extends Tool{
         group.append(ul);
         return group;
     }
+    getPreviewId(){
+        const previewId=sessionStorage.getItem("previewId")||strRandom();
+        sessionStorage.setItem("previewId",previewId);
+        return previewId;
+    }
     doPreview(withPaging){
-        let targetUrl=window._server+"/preview?_u=p";
+        const previewId=this.getPreviewId();
+        let targetUrl=window._server+"/preview?_u=p&previewId="+previewId;
         if(withPaging){
             targetUrl+='&_i=1&_r=1';
         }
         const content=tableToXml(this.context);
         $.ajax({
-            url:window._server+"/designer/savePreviewData",
+            url:window._server+"/designer/savePreviewData?previewId="+previewId,
             type:'POST',
             data:{content},
             success:function(){
